@@ -18,14 +18,15 @@
     <div class="container">
         <section id="list-container" class="main hidden"><!--hidden-->
             <div id="filter">
-                <select>
-                    <option>All</option>
-                    <option>Restaurant</option>
-                    <option>Hiking Trail</option>
+                <select data-bind="value: currentFilter">
+                    <option value="All">All</option>
+                    <option value="Food/Beverage">Food/Beverage</option>
+                    <option value="Hiking Trail">Hiking Trail</option>
+                    <option value="Park">Park</option>
                 </select>
                 <button>Filter</button>
             </div>
-            <ul id="list" data-bind="foreach: markers">
+            <ul id="list" data-bind="foreach: filterPlaces">
                 <li class="item" data-bind="text: title, click: $parent.clickItem"></li>
             </ul>
         </section>
