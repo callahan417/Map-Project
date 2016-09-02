@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <title>Moab Map Application</title>
+    <link rel="stylesheet" href="geo.css" >
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js" defer></script>
+    <script src="geo.js" defer></script>
+    <!--link/script? Google Maps API-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header>
+        <span id="burger" data-bind="click: toggleList">&#9776</span>
+        <h1 id="title">GeoMoab</h1>
+    </header>
+
+    <div class="container">
+        <section id="list-container" class="main hidden"><!--hidden-->
+            <div id="filter">
+                <select>
+                    <option>All</option>
+                    <option>Restaurant</option>
+                    <option>Hiking Trail</option>
+                </select>
+                <button>Filter</button>
+            </div>
+            <ul id="list" data-bind="foreach: markers">
+                <li class="item" data-bind="text: title, click: $parent.clickItem"></li>
+            </ul>
+        </section>
+
+        <section id="map" class="main"></section>
+    </div>
+
+</body>
+
+</html>
