@@ -4,21 +4,31 @@ var data = {
     locations: [//array of objects holding location data
     {
         title: "Dinosaur Tracks",
-        lat: null,
-        lng: null,
+        lat: 38.533470,
+        lng: -109.607889,
         category: 'Hiking Trail'
     }, {
         title: "Eddie McStiff's",
-        lat: null,
-        lng: null,
+        lat: 38.572465,
+        lng: -109.549875,
         category: 'Food/Beverage'
     }, {
         title: "Canyonlands National Park",
-        lat: null,
-        lng: null,
+        lat: 38.459697,
+        lng: -109.820975,
         category: 'Park'
+    }, {
+        title: "Arches National Park",
+        lat: 38.616527,
+        lng: -109.619682,
+        category: 'Park'
+    }, {
+        title: "La Sal Mountain Loop",
+        lat: 38.494108,
+        lng: -109.455186,
+        category: 'Scenic Drive'
     }]
-}
+};
 
 //ViewModel
 var ViewModel = function() {
@@ -32,7 +42,13 @@ var ViewModel = function() {
     this.currentFilter = ko.observable(); //property to store the filter
     var self = this;
     this.filterPlaces = ko.computed(function() {
-        if(!this.currentFilter() || this.currentFilter() === "All") {
+        if(!this.currentFilter() || this.currentFilter() === "All") {//TODO: remove !this.currentFilter()?
+            //if commented out code doesn't work, try onchange event binding (select element) for markers
+            /*ko.utils.arrayForEach(this.places(), function(place){
+                if (!place.marker.map) {
+                    place.marker.setMap(map);
+                }
+            });*/
             return this.places();
         } else {
             return ko.utils.arrayFilter(this.places(), function(place) {
@@ -62,6 +78,22 @@ var ViewModel = function() {
         //TODO: Add code to highlight/animate map marker
     }
 };
+
+var map;
+var initMap = function() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 38.584435, lng: -109.54984},
+        zoom: 11
+    });
+    map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+    ko.utils.arrayForEach(viewModel.places(), function(place) {
+        place.marker = new google.maps.Marker({
+            position: {lat: place.lat, lng: place.lng},
+            map: map,
+            title: place.title
+        });
+    });
+}
 
 var viewModel = new ViewModel();
 ko.applyBindings(viewModel);
