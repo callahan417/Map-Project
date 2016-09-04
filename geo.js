@@ -44,20 +44,22 @@ var ViewModel = function() {
     this.filterPlaces = ko.computed(function() {
         if(!this.currentFilter() || this.currentFilter() === "All") {//TODO: remove !this.currentFilter()?
             //if commented out code doesn't work, try onchange event binding (select element) for markers
-            /*ko.utils.arrayForEach(this.places(), function(place){
-                if (!place.marker.map) {
-                    place.marker.setMap(map);
-                }
-            });*/
+            if (this.places()[0].marker) {
+                ko.utils.arrayForEach(this.places(), function(place){
+                    if (/*place.marker &&*/ !place.marker.map) {
+                        place.marker.setMap(map);
+                    }
+                });
+            }
             return this.places();
         } else {
             return ko.utils.arrayFilter(this.places(), function(place) {
                 //console.log(self.currentFilter());
-                /*if (place.category === self.currentFilter()) {
+                if (place.category === self.currentFilter()) {
                     place.marker.setMap(map);
                 } else {
                     place.marker.setMap(null);
-                }*/
+                }
 
                 return place.category === self.currentFilter();
             });
@@ -93,7 +95,7 @@ var initMap = function() {
             title: place.title
         });
     });
-}
+};
 
 var viewModel = new ViewModel();
 ko.applyBindings(viewModel);
