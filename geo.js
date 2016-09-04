@@ -27,6 +27,11 @@ var data = {
         lat: 38.494108,
         lng: -109.455186,
         category: 'Scenic Drive'
+    }, {
+        title: "Moab Brewery",
+        lat: 38.562600,
+        lng: -109.549709,
+        category: 'Food/Beverage'
     }]
 };
 
@@ -71,14 +76,24 @@ var ViewModel = function() {
         $('#list-container').toggleClass('hidden');
     };
 
+    var animateMarker = function(data) {
+        data.marker.setAnimation(google.maps.Animation.DROP);
+        setTimeout(function() {
+            data.marker.setAnimation(google.maps.Animation.BOUNCE);
+        }, 500);
+        setTimeout(function() {
+            data.marker.setAnimation(null);
+        }, 4000);
+    };
+
     //function that changes styling on list item when it is clicked
     this.clickItem = function(data, event) {
         //console.log(data);
-        $(event.target).addClass('highlighted');
-        $(event.target).siblings().removeClass('highlighted');
-        //console.log(event.target);
-        //TODO: Add code to highlight/animate map marker
-    }
+        $(event.target).addClass('highlighted');//TODO: remove $()?, change addClass to toggleClass?
+        $(event.target).siblings().removeClass('highlighted');//TODO: remove $()?
+        //console.log(data);
+        animateMarker(data);
+    };
 };
 
 var map;
