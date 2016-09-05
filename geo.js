@@ -51,13 +51,6 @@ var ViewModel = function() {
             return this.places();
         } else {
             return ko.utils.arrayFilter(this.places(), function(place) {
-                //console.log(self.currentFilter());
-                /*if (place.category === self.currentFilter()) {
-                    place.marker.setMap(map);
-                } else {
-                    place.marker.setMap(null);
-                }*/
-
                 return place.category === self.currentFilter();
             });
         }
@@ -71,20 +64,18 @@ var ViewModel = function() {
     this.filterMarkers = function() {
         //In a change event handler, this refers to the outer (viewModel) context
         console.log(this.places()[0].marker);
-        //if (this.places()[0].marker) {//If markers have been added to place objects
-            ko.utils.arrayForEach(this.places(), function(place){
-                //If the filter is "All", or if category matches filter and marker is not on map:
-                if (self.currentFilter() === "All" || place.category === self.currentFilter()) {
-                    if (!place.marker.map) {
-                        console.log('setMap');
-                        place.marker.setMap(map);//put marker on map
-                    }
-                } else if (place.marker.map) {
-                //If filter is not "All" and it doesn't match category and marker is on map:
-                    place.marker.setMap(null);//remove marker from map
+        ko.utils.arrayForEach(this.places(), function(place){
+            //If the filter is "All", or if category matches filter and marker is not on map:
+            if (self.currentFilter() === "All" || place.category === self.currentFilter()) {
+                if (!place.marker.map) {
+                    console.log('setMap');
+                    place.marker.setMap(map);//put marker on map
                 }
-            });
-        //}
+            } else if (place.marker.map) {
+            //If filter is not "All" and it doesn't match category and marker is on map:
+                place.marker.setMap(null);//remove marker from map
+            }
+        });
     };
 
     this.animateMarker = function(data) {
@@ -110,19 +101,23 @@ var ViewModel = function() {
 };
 
 var map;
+var bounds;
 var initMap = function() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 38.584435, lng: -109.54984},
         zoom: 11
     });
     map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+    bounds = new google.maps.LatLngBounds();
     ko.utils.arrayForEach(viewModel.places(), function(place) {
         place.marker = new google.maps.Marker({
             position: {lat: place.lat, lng: place.lng},
             map: map,
             title: place.title
         });
+        bounds.extend(place.marker.position);
     });
+    map.fitBounds(bounds);
 };
 
 var viewModel = new ViewModel();
