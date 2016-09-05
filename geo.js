@@ -109,6 +109,7 @@ var initMap = function() {
     });
     map.setMapTypeId(google.maps.MapTypeId.HYBRID);
     bounds = new google.maps.LatLngBounds();
+    var infoWindow = new google.maps.InfoWindow;
     ko.utils.arrayForEach(viewModel.places(), function(place) {
         place.marker = new google.maps.Marker({
             position: {lat: place.lat, lng: place.lng},
@@ -116,6 +117,20 @@ var initMap = function() {
             title: place.title
         });
         bounds.extend(place.marker.position);
+        place.marker.addListener('click', function() {
+            //Within the click listener, this is the marker that was clicked
+            if (infoWindow.marker != this) {
+                infoWindow.marker = this;
+                console.log(infoWindow.marker);
+                infoWindow.setContent(this.title + '<br>' + this.position);
+                console.log(infoWindow.getContent());
+                // Make sure the marker property is cleared if the infowindow is closed.
+                infoWindow.addListener('closeclick', function() {
+                    infoWindow.marker = null;
+                });
+                infoWindow.open(map, this);
+            }
+        });
     });
     map.fitBounds(bounds);
 };
