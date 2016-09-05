@@ -18,14 +18,14 @@
     <div class="container">
         <section id="list-container" class="main hidden"><!--hidden-->
             <div id="filter">
-                <select data-bind="value: currentFilter">
+                <select data-bind="value: currentFilter, event: {change: filterMarkers}">
                     <option value="All">All</option>
                     <option value="Food/Beverage">Food/Beverage</option>
                     <option value="Hiking Trail">Hiking Trail</option>
                     <option value="Park">Park</option>
                     <option value="Scenic Drive">Scenic Drive</option>
                 </select>
-                <button>Filter</button>
+                <button>Filter</button><!--TODO: change to h3 or span and move to before select-->
             </div>
             <ul id="list" data-bind="foreach: filterPlaces">
                 <li class="item" data-bind="text: title, click: $parent.clickItem"></li>

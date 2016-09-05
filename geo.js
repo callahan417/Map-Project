@@ -44,27 +44,19 @@ var ViewModel = function() {
 
     //The code below for filtering the this.places() array was adapted from
     //http://stackoverflow.com/questions/20857594/knockout-filtering-on-observable-array
-    this.currentFilter = ko.observable(); //property to store the filter
+    this.currentFilter = ko.observable(); //the selected category to use for filtering
     var self = this;
     this.filterPlaces = ko.computed(function() {
         if(!this.currentFilter() || this.currentFilter() === "All") {//TODO: remove !this.currentFilter()?
-            //if commented out code doesn't work, try onchange event binding (select element) for markers
-            if (this.places()[0].marker) {
-                ko.utils.arrayForEach(this.places(), function(place){
-                    if (/*place.marker &&*/ !place.marker.map) {
-                        place.marker.setMap(map);
-                    }
-                });
-            }
             return this.places();
         } else {
             return ko.utils.arrayFilter(this.places(), function(place) {
                 //console.log(self.currentFilter());
-                if (place.category === self.currentFilter()) {
+                /*if (place.category === self.currentFilter()) {
                     place.marker.setMap(map);
                 } else {
                     place.marker.setMap(null);
-                }
+                }*/
 
                 return place.category === self.currentFilter();
             });
@@ -76,7 +68,26 @@ var ViewModel = function() {
         $('#list-container').toggleClass('hidden');
     };
 
-    var animateMarker = function(data) {
+    this.filterMarkers = function() {
+        //In a change event handler, this refers to the outer (viewModel) context
+        console.log(this.places()[0].marker);
+        //if (this.places()[0].marker) {//If markers have been added to place objects
+            ko.utils.arrayForEach(this.places(), function(place){
+                //If the filter is "All", or if category matches filter and marker is not on map:
+                if (self.currentFilter() === "All" || place.category === self.currentFilter()) {
+                    if (!place.marker.map) {
+                        console.log('setMap');
+                        place.marker.setMap(map);//put marker on map
+                    }
+                } else if (place.marker.map) {
+                //If filter is not "All" and it doesn't match category and marker is on map:
+                    place.marker.setMap(null);//remove marker from map
+                }
+            });
+        //}
+    };
+
+    this.animateMarker = function(data) {
         data.marker.setAnimation(google.maps.Animation.DROP);
         setTimeout(function() {
             data.marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -88,11 +99,13 @@ var ViewModel = function() {
 
     //function that changes styling on list item when it is clicked
     this.clickItem = function(data, event) {
-        //console.log(data);
+        //In a click handler function, this refers to the object corresponding
+        //to the DOM element that was clicked
+        //console.log(this);
         $(event.target).addClass('highlighted');//TODO: remove $()?, change addClass to toggleClass?
-        $(event.target).siblings().removeClass('highlighted');//TODO: remove $()?
+        $(event.target).siblings('.highlighted').removeClass('highlighted');//TODO: remove $()?
         //console.log(data);
-        animateMarker(data);
+        self.animateMarker(data);
     };
 };
 
