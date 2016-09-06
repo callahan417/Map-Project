@@ -123,7 +123,21 @@ var initMap = function() {
 
         place.marker.addListener('click', function() {
             //Within the click listener, this is the marker that was clicked
+            //Animate marker
             viewModel.animateMarker(this);
+
+            //If the clicked marker (this) does not match the highlighted list item,
+            if ($('li.highlighted').text() !== this.title) {
+                $('li.highlighted').removeClass('highlighted');//remove highlighting from list item
+                //Highlight the list item corresponding to the clicked marker
+                items = $('li').toArray();
+                items.forEach(function(element) {
+                    if ($(element).text() === this.title) {
+                        $(element).addClass('highlighted');
+                    }
+                }, this);
+            }
+
             if (infoWindow.marker != this) {
                 infoWindow.marker = this;
                 console.log(this);
