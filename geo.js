@@ -100,11 +100,12 @@ var ViewModel = function() {
         if (infoWindow.marker != marker) {//TODO: change 'this' to 'marker' #
             infoWindow.marker = marker;//TODO: change 'this' to 'marker' #
             //console.log(this);
-            infoWindow.setContent("Searching...");
+            infoWindow.setContent("Requesting Wikipedia API...");//TODO: delete?
+            infoWindow.open(map, infoWindow.marker);
 
             var wikiRequestTimeout = setTimeout(function() {
-                infoWindow.setContent('An error occurred while searching Wikipedia');
-            }, 8000);
+                infoWindow.setContent('Error: The Wikipedia API failed to load');
+            }, 6000);
 
             $.ajax({
                 url: 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' +
@@ -267,4 +268,8 @@ var initMap = function() {
 var viewModel = new ViewModel();
 ko.applyBindings(viewModel);
 
-console.log(viewModel.places());
+setTimeout(function() {
+    alert('This website uses the Wikipedia API to provide information about places in the Moab area.' +
+    ' Just click on any map marker!');
+}, 3000);
+//console.log(viewModel.places());
