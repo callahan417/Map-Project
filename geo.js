@@ -78,14 +78,14 @@ var ViewModel = function() {
         });
     };
 
-    this.animateMarker = function(data) {
-        data.marker.setAnimation(google.maps.Animation.DROP);
+    this.animateMarker = function(marker) {
+        marker.setAnimation(google.maps.Animation.DROP);
         setTimeout(function() {
-            data.marker.setAnimation(google.maps.Animation.BOUNCE);
+            marker.setAnimation(google.maps.Animation.BOUNCE);
         }, 500);
         setTimeout(function() {
-            data.marker.setAnimation(null);
-        }, 4000);
+            marker.setAnimation(null);
+        }, 3000);
     };
 
     //function that changes styling on list item when it is clicked
@@ -96,7 +96,7 @@ var ViewModel = function() {
         $(event.target).addClass('highlighted');//TODO: remove $()?, change addClass to toggleClass?
         $(event.target).siblings('.highlighted').removeClass('highlighted');//TODO: remove $()?
         //console.log(data);
-        self.animateMarker(data);
+        self.animateMarker(data.marker);
     };
 };
 
@@ -120,10 +120,13 @@ var initMap = function() {
             title: place.title
         });
         bounds.extend(place.marker.position);
+
         place.marker.addListener('click', function() {
             //Within the click listener, this is the marker that was clicked
+            viewModel.animateMarker(this);
             if (infoWindow.marker != this) {
                 infoWindow.marker = this;
+                console.log(this);
                 infoWindow.setContent("Searching...");
 
                 var wikiRequestTimeout = setTimeout(function() {
@@ -152,6 +155,7 @@ var initMap = function() {
                         }
 
                         infoWindow.setContent(html);
+                        infoWindow.open(map, infoWindow.marker);
 
                         clearTimeout(wikiRequestTimeout);
                     }
@@ -166,7 +170,7 @@ var initMap = function() {
                 infoWindow.addListener('closeclick', function() {
                     infoWindow.marker = null;
                 });
-                infoWindow.open(map, this);
+                //infoWindow.open(map, this);
             }
         });
     });
