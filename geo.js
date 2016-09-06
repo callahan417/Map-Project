@@ -91,6 +91,61 @@ var ViewModel = function() {
         }, 3000);
     };
 
+    this.fillInfoWindow = function(marker) {
+        console.log(marker);
+        console.log(map);
+
+        //TODO: Start fillInfoWindow here...
+        //Change the infoWindow (content and position) if the clicked marker/item has changed
+        if (infoWindow.marker != marker) {//TODO: change 'this' to 'marker' #
+            infoWindow.marker = marker;//TODO: change 'this' to 'marker' #
+            //console.log(this);
+            infoWindow.setContent("Searching...");
+
+            var wikiRequestTimeout = setTimeout(function() {
+                infoWindow.setContent('An error occurred while searching Wikipedia');
+            }, 8000);
+
+            $.ajax({
+                url: 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' +
+                    marker.title + '&format=json',//TODO: change 'this' to 'marker' #
+                dataType: "jsonp",
+                //jsonp: "callback", (included for APIs that use a different name for the callback function)
+                success: function(response) {
+                    //console.log(response);
+                    var url = "";
+                    var html = '<h3>' + response[0] + '</h3>';
+                    if (response[1].length) {
+                        html += '<br><h4><em>Wikipedia Articles:</em></h4><ul>';
+                        for (var i = 0; i < response[1].length; i++){
+                            url = response[3][i];
+                            html += '<li><a href="' + url + '">' + response[1][i] + '</a></li>';
+                        }
+                        html += '</ul>'
+                    } else {
+                        html += "No Wikipedia Articles Found";
+                    }
+
+                    infoWindow.setContent(html);
+                    infoWindow.open(map, infoWindow.marker);
+
+                    clearTimeout(wikiRequestTimeout);
+                }
+            });
+            /*.fail(function() {
+                alert('Failure');
+                infoWindow.setContent('An error occurred while searching Wikipedia');
+            });*/
+
+            //console.log(infoWindow.getContent());
+            // Make sure the marker property is cleared if the infowindow is closed.
+            infoWindow.addListener('closeclick', function() {
+                infoWindow.marker = null;
+            });
+            //infoWindow.open(map, this);
+        }//TODO: END fillInfoWindow here...
+    };
+
     //function that changes styling on list item when it is clicked
     this.clickItem = function(data, event) {
         //In a click handler function, this refers to the object corresponding
@@ -103,11 +158,14 @@ var ViewModel = function() {
         self.selected(data.title);
 
         self.animateMarker(data.marker);
+
+        self.fillInfoWindow(data.marker);
     };
 };
 
 var map;
 var bounds;
+var infoWindow;
 
 var initMap = function() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -117,7 +175,7 @@ var initMap = function() {
     map.setMapTypeId(google.maps.MapTypeId.HYBRID);
 
     bounds = new google.maps.LatLngBounds();
-    var infoWindow = new google.maps.InfoWindow;
+    infoWindow = new google.maps.InfoWindow;
 
     ko.utils.arrayForEach(viewModel.places(), function(place) {
         place.marker = new google.maps.Marker({
@@ -147,9 +205,11 @@ var initMap = function() {
 
             viewModel.selected(this.title);//change selected variable to clicked marker's title
 
+            viewModel.fillInfoWindow(this);
+            /*//TODO:Delete code below that creates info window (covered by above function call)
             if (infoWindow.marker != this) {
                 infoWindow.marker = this;
-                console.log(this);
+                //console.log(this);
                 infoWindow.setContent("Searching...");
 
                 var wikiRequestTimeout = setTimeout(function() {
@@ -162,8 +222,7 @@ var initMap = function() {
                     dataType: "jsonp",
                     //jsonp: "callback", (included for APIs that use a different name for the callback function)
                     success: function(response) {
-                        //var articleList = response[1];
-                        console.log(response);
+                        //console.log(response);
                         var url = "";
                         var html = '<h3>' + response[0] + '</h3>';
                         if (response[1].length) {
@@ -186,7 +245,7 @@ var initMap = function() {
                 /*.fail(function() {
                     alert('Failure');
                     infoWindow.setContent('An error occurred while searching Wikipedia');
-                });*/
+                });*//*
 
                 //console.log(infoWindow.getContent());
                 // Make sure the marker property is cleared if the infowindow is closed.
@@ -194,7 +253,7 @@ var initMap = function() {
                     infoWindow.marker = null;
                 });
                 //infoWindow.open(map, this);
-            }
+            }*/
         });
     });
     map.fitBounds(bounds);
