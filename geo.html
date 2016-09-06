@@ -28,7 +28,7 @@
                 </select>
             </div>
             <ul id="list" data-bind="foreach: filterPlaces">
-                <li class="item" data-bind="text: title, click: $parent.clickItem"></li>
+                <li class="item" data-bind="text: title, click: $parent.clickItem, css: {highlighted: $parent.selected() === title }"></li>
             </ul>
         </section>
 

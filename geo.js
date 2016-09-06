@@ -42,9 +42,11 @@ var ViewModel = function() {
         this.places.push(location);
     }, this);
     this.hideList = ko.observable(true);
+    this.selected = ko.observable();//the title of the selected marker/list item
+
     //The code below for filtering the this.places() array was adapted from
     //http://stackoverflow.com/questions/20857594/knockout-filtering-on-observable-array
-    this.currentFilter = ko.observable(); //the selected category to use for filtering
+    this.currentFilter = ko.observable(); //the category to use for filtering
     var self = this;
     this.filterPlaces = ko.computed(function() {
         if(!this.currentFilter() || this.currentFilter() === "All") {//TODO: remove !this.currentFilter()?
@@ -93,10 +95,13 @@ var ViewModel = function() {
     this.clickItem = function(data, event) {
         //In a click handler function, this refers to the object corresponding
         //to the DOM element that was clicked
-        //console.log(this);
-        $(event.target).addClass('highlighted');//TODO: remove $()?, change addClass to toggleClass?
-        $(event.target).siblings('.highlighted').removeClass('highlighted');//TODO: remove $()?
-        //console.log(data);
+
+        //TODO:Delete code below that changes highlighted item (covered by line below)
+        /*$(event.target).addClass('highlighted');
+        $(event.target).siblings('.highlighted').removeClass('highlighted');//TODO: remove $()?*/
+
+        self.selected(data.title);
+
         self.animateMarker(data.marker);
     };
 };
@@ -127,7 +132,8 @@ var initMap = function() {
             //Animate marker
             viewModel.animateMarker(this);
 
-            //If the clicked marker (this) does not match the highlighted list item,
+            //TODO: Delete code below that changes highlighted item (covered by line under it)
+            /*//If the clicked marker (this) does not match the highlighted list item,
             if ($('li.highlighted').text() !== this.title) {
                 $('li.highlighted').removeClass('highlighted');//remove highlighting from list item
                 //Highlight the list item corresponding to the clicked marker
@@ -137,7 +143,9 @@ var initMap = function() {
                         $(element).addClass('highlighted');
                     }
                 }, this);
-            }
+            }*/
+
+            viewModel.selected(this.title);//change selected variable to clicked marker's title
 
             if (infoWindow.marker != this) {
                 infoWindow.marker = this;
