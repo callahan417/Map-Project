@@ -41,7 +41,7 @@ var ViewModel = function() {
     data.locations.forEach(function(location) {
         this.places.push(location);
     }, this);
-
+    this.hideList = ko.observable(true);
     //The code below for filtering the this.places() array was adapted from
     //http://stackoverflow.com/questions/20857594/knockout-filtering-on-observable-array
     this.currentFilter = ko.observable(); //the selected category to use for filtering
@@ -58,12 +58,13 @@ var ViewModel = function() {
 
     //function that hides/shows list when hamburger icon is clicked
     this.toggleList = function() {
-        $('#list-container').toggleClass('hidden');
+        /*$('#list-container').toggleClass('hidden');*/
+        this.hideList(!this.hideList());//**
     };
 
     this.filterMarkers = function() {
         //In a change event handler, this refers to the outer (viewModel) context
-        console.log(this.places()[0].marker);
+        //console.log(this.places()[0].marker);
         ko.utils.arrayForEach(this.places(), function(place){
             //If the filter is "All", or if category matches filter and marker is not on map:
             if (self.currentFilter() === "All" || place.category === self.currentFilter()) {
