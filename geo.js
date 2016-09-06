@@ -189,6 +189,11 @@ var initMap = function() {
         });
     });
     map.fitBounds(bounds);
+
+    window.addEventListener('resize', function(e) {
+      //Re-fit map when page size changes
+      map.fitBounds(bounds);
+    });
 };
 
 var viewModel = new ViewModel();
