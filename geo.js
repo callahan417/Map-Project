@@ -23,7 +23,7 @@ var data = {
         lng: -109.619682,
         category: 'Park'
     }, {
-        title: "La Sal Mountain Loop",
+        title: "La Sal Mountains",
         lat: 38.494108,
         lng: -109.455186,
         category: 'Scenic Drive'
@@ -32,7 +32,7 @@ var data = {
         lat: 38.562600,
         lng: -109.549709,
         category: 'Food/Beverage'
-    }]
+    }],
 };
 
 //ViewModel
@@ -102,14 +102,17 @@ var ViewModel = function() {
 
 var map;
 var bounds;
+
 var initMap = function() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 38.584435, lng: -109.54984},
         zoom: 11
     });
     map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+
     bounds = new google.maps.LatLngBounds();
     var infoWindow = new google.maps.InfoWindow;
+
     ko.utils.arrayForEach(viewModel.places(), function(place) {
         place.marker = new google.maps.Marker({
             position: {lat: place.lat, lng: place.lng},
@@ -121,9 +124,44 @@ var initMap = function() {
             //Within the click listener, this is the marker that was clicked
             if (infoWindow.marker != this) {
                 infoWindow.marker = this;
-                console.log(infoWindow.marker);
-                infoWindow.setContent(this.title + '<br>' + this.position);
-                console.log(infoWindow.getContent());
+                infoWindow.setContent("Searching...");
+
+                var wikiRequestTimeout = setTimeout(function() {
+                    infoWindow.setContent('An error occurred while searching Wikipedia');
+                }, 8000);
+
+                $.ajax({
+                    url: 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' +
+                        this.title + '&format=json',
+                    dataType: "jsonp",
+                    //jsonp: "callback", (included for APIs that use a different name for the callback function)
+                    success: function(response) {
+                        //var articleList = response[1];
+                        console.log(response);
+                        var url = "";
+                        var html = '<h3>' + response[0] + '</h3>';
+                        if (response[1].length) {
+                            html += '<br><h4><em>Wikipedia Articles:</em></h4><ul>';
+                            for (var i = 0; i < response[1].length; i++){
+                                url = response[3][i];
+                                html += '<li><a href="' + url + '">' + response[1][i] + '</a></li>';
+                            }
+                            html += '</ul>'
+                        } else {
+                            html += "No Wikipedia Articles Found";
+                        }
+
+                        infoWindow.setContent(html);
+
+                        clearTimeout(wikiRequestTimeout);
+                    }
+                });
+                /*.fail(function() {
+                    alert('Failure');
+                    infoWindow.setContent('An error occurred while searching Wikipedia');
+                });*/
+
+                //console.log(infoWindow.getContent());
                 // Make sure the marker property is cleared if the infowindow is closed.
                 infoWindow.addListener('closeclick', function() {
                     infoWindow.marker = null;
