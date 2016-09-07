@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <title>Moab Map Application</title>
     <link rel="stylesheet" href="geo.css" >
@@ -9,16 +10,20 @@
     <script src="geo.js" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
+
     <header>
         <span id="burger" data-bind="click: toggleList">&#9776</span>
         <h1 id="title">GeoMoab</h1>
     </header>
 
     <div class="container">
-        <section id="list-container" class="main" data-bind="css: {hidden: hideList}"><!--hidden-->
+
+        <section id="list-container" class="main" data-bind="css: {hidden: hideList}">
+
             <div id="filter">
-                <span id="label">Filter:</span><!--TODO: change color-->
+                <span id="label">Filter:</span>
                 <select data-bind="value: currentFilter, event: {change: filterMarkers}">
                     <option value="All">All</option>
                     <option value="Food/Beverage">Food/Beverage</option>
@@ -27,12 +32,15 @@
                     <option value="Scenic Drive">Scenic Drive</option>
                 </select>
             </div>
+
             <ul id="list" data-bind="foreach: filterPlaces">
                 <li class="item" data-bind="text: title, click: $parent.clickItem, css: {highlighted: $parent.selected() === title }"></li>
             </ul>
+
         </section>
 
         <section id="map" class="main"></section>
+
     </div>
 
 </body>
