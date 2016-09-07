@@ -109,7 +109,7 @@ var ViewModel = function() {
 
             var wikiRequestTimeout = setTimeout(function() {
                 infoWindow.setContent('Error: The Wikipedia API failed to load');
-            }, 6000);
+            }, 2000);
 
             //request Wikipedia API information and add to info window
             $.ajax({
