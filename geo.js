@@ -32,6 +32,16 @@ var data = {
         lat: 38.562600,
         lng: -109.549709,
         category: 'Food/Beverage'
+    }, {
+        title: "Corona Arch",
+        lat: 38.574680,
+        lng: -109.632429,
+        category: 'Hiking Trail'
+    }, {
+        title: "Utah State Route 128",//Utah State Route 128
+        lat: 38.601864,
+        lng: -109.575358,
+        category: 'Food/Beverage'
     }],
 };
 
@@ -88,7 +98,7 @@ var ViewModel = function() {
         }, 500);
         setTimeout(function() {
             marker.setAnimation(null);
-        }, 3000);
+        }, 4000);
     };
 
     this.fillInfoWindow = function(marker) {
