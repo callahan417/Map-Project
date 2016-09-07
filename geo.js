@@ -157,6 +157,11 @@ var map;
 var bounds;
 var infoWindow;
 
+/*//Display error message if Google Maps API fails to load
+function mapError(event) {
+    alert('An error occurred while loading the Google Maps API.')
+};*/
+
 //function that creates map and markers
 var initMap = function() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -193,6 +198,13 @@ var initMap = function() {
 //Apply Knockout bindings to ViewModel
 var viewModel = new ViewModel();
 ko.applyBindings(viewModel);
+
+//Error handling for Google Maps API
+setTimeout(function() {
+    if (!(typeof(google) === 'object' && typeof(google.maps) === 'object')) {
+        alert('An error occurred while loading the Google Maps API.')
+    }
+}, 2000);
 
 //Wikipedia API attribution
 setTimeout(function() {
